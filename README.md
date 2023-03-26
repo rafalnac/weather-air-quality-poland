@@ -1,1 +1,1 @@
-# weather-pollution-air-poland
+# weather-air-quality-poland
