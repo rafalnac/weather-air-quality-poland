@@ -12,6 +12,15 @@
 			"metadata": "Secure string for 'connectionString' of 'syn-neu-WorkspaceDefaultSqlServer'",
 			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:syn-neu.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
 		},
+		"syn_neu_serverless_project1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'syn_neu_serverless_project1'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=syn-neu-ondemand.sql.azuresynapse.net;Initial Catalog=project1"
+		},
+		"ls_htttp_gios_air_quality_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "http://api.gios.gov.pl/pjp-api/rest/"
+		},
 		"syn-neu-WorkspaceDefaultStorage_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://ststreamingaccdev.dfs.core.windows.net"
@@ -21,6 +30,411 @@
 		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/pl_ingest_gios_measure_points')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetAirQualityMeasurePoints",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlDWSource",
+								"sqlReaderQuery": "SELECT station_id\nFROM air_quality.v_monitoring_stations;",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "syn_serverless_monitoring_stations_all",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "IterateStationIds",
+						"description": "Iterate through station ids",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetAirQualityMeasurePoints",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetAirQualityMeasurePoints').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "GetMeasurePointForStation",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "JsonSource",
+											"storeSettings": {
+												"type": "HttpReadSettings",
+												"requestMethod": "GET"
+											},
+											"formatSettings": {
+												"type": "JsonReadSettings"
+											}
+										},
+										"sink": {
+											"type": "JsonSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "JsonWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"dataIntegrationUnits": 2
+									},
+									"inputs": [
+										{
+											"referenceName": "ds_air_quality_http",
+											"type": "DatasetReference",
+											"parameters": {
+												"relative_url": {
+													"value": "@concat('station/sensors/', item().station_id)",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ds_air_quality_json_adl_streaming",
+											"type": "DatasetReference",
+											"parameters": {
+												"container_name": {
+													"value": "@pipeline().parameters.air_quality_container_name",
+													"type": "Expression"
+												},
+												"directory": {
+													"value": "@pipeline().parameters.raw_data_measure_points_dir_path",
+													"type": "Expression"
+												},
+												"file_name": {
+													"value": "@concat('measure_point_station_',item().station_id, '_', formatDateTime(utcNow(), 'yyyy-MM-ddTHH_mm_ss_fffffffK'), '.json')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"air_quality_container_name": {
+						"type": "string",
+						"defaultValue": "weather-air-quality-poland"
+					},
+					"raw_data_measure_points_dir_path": {
+						"type": "string",
+						"defaultValue": "raw-data/measure_points"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-03-27T20:30:28Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/syn_serverless_monitoring_stations_all')]",
+				"[concat(variables('workspaceId'), '/datasets/ds_air_quality_http')]",
+				"[concat(variables('workspaceId'), '/datasets/ds_air_quality_json_adl_streaming')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/pl_ingest_gios_stations_data')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetAirQualityStationsData",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings",
+									"filePattern": "arrayOfObjects"
+								}
+							},
+							"enableStaging": false,
+							"dataIntegrationUnits": 2
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_air_quality_http",
+								"type": "DatasetReference",
+								"parameters": {
+									"relative_url": "station/findAll"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_air_quality_json_adl_streaming",
+								"type": "DatasetReference",
+								"parameters": {
+									"container_name": {
+										"value": "@pipeline().parameters.air_quality_container_name",
+										"type": "Expression"
+									},
+									"directory": {
+										"value": "@pipeline().parameters.raw_data_stations_dir_path",
+										"type": "Expression"
+									},
+									"file_name": {
+										"value": "@concat('stations_', formatDateTime(utcNow(), 'yyyy-MM-ddTHH_mm_ss_fffffffK'), '.json')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"air_quality_container_name": {
+						"type": "string",
+						"defaultValue": "weather-air-quality-poland"
+					},
+					"raw_data_dir_path": {
+						"type": "string",
+						"defaultValue": "raw-data"
+					},
+					"raw_data_stations_dir_path": {
+						"type": "string",
+						"defaultValue": "raw-data/stations"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-03-27T20:18:20Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/ds_air_quality_http')]",
+				"[concat(variables('workspaceId'), '/datasets/ds_air_quality_json_adl_streaming')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ds_air_quality_http')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_htttp_gios_air_quality",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"relative_url": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": {
+							"value": "@dataset().relative_url",
+							"type": "Expression"
+						}
+					},
+					"encodingName": "UTF-8 without BOM"
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/ls_htttp_gios_air_quality')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ds_air_quality_json_adl_streaming')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "syn-neu-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"container_name": {
+						"type": "string"
+					},
+					"directory": {
+						"type": "string"
+					},
+					"file_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().file_name",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().directory",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().container_name",
+							"type": "Expression"
+						}
+					},
+					"encodingName": "UTF-8 without BOM"
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/syn-neu-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/syn_serverless_monitoring_stations_all')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "syn_neu_serverless_project1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "station_sk",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "station_id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "street",
+						"type": "varchar"
+					},
+					{
+						"name": "city_name",
+						"type": "varchar"
+					},
+					{
+						"name": "latitude",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "longitude",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "station_name",
+						"type": "varchar"
+					},
+					{
+						"name": "processed_timestamp",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "air_quality",
+					"table": "v_monitoring_stations"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/syn_neu_serverless_project1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ls_htttp_gios_air_quality')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"description": "API details:\nhttps://powietrze.gios.gov.pl/pjp/content/api",
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('ls_htttp_gios_air_quality_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/syn-neu-WorkspaceDefaultSqlServer')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
@@ -65,6 +479,25 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/syn_neu_serverless_project1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('syn_neu_serverless_project1_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
 			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
 			"apiVersion": "2019-06-01-preview",
@@ -80,6 +513,36 @@
 						}
 					}
 				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/create_view_stations_list')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DROP VIEW IF EXISTS air_quality.v_monitoring_stations;\nGO;\nCREATE VIEW air_quality.v_monitoring_stations\n    AS (\n    SELECT\n        *\n    FROM\n        OPENROWSET(\n            BULK 'https://ststreamingaccdev.dfs.core.windows.net/weather-air-quality-poland/silver/monitoring_stations_silver',\n            FORMAT = 'DELTA'\n        ) AS [result]\n)",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "project1",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
 			},
 			"dependsOn": []
 		}
