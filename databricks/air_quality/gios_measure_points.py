@@ -11,7 +11,8 @@ from databricks.utils.helpers import extract_timestamp_string, parse_file_timest
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### Ingest measure points data (BRONZE)
+# MAGIC #### Ingest sensor data (BRONZE)
+# MAGIC Each station has muliple sensors. Each sensor measures level of different chemical compound.
 # MAGIC - Each file comes in the json format
 # MAGIC - Expect that each file name contains timestamp in format 'yyyy-MM-dd'T'HH_mm_ss_SSSSSSSX'.
 # MAGIC - File name example 'measure_point_station_10005_2023-03-27T20_25_43_6291508Z.json'
