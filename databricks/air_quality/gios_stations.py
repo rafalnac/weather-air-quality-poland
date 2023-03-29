@@ -1,12 +1,12 @@
 # Databricks notebook source
 import os
 
-from pyspark.sql.functions import current_timestamp, input_file_name, schema_of_json, col
+from pyspark.sql.functions import current_timestamp, input_file_name, schema_of_json, col, count
 from pyspark.sql.types import *
 from delta.tables import DeltaTable
 
 from databricks.utils.constants import WEATHER_AIR_QUALITY_CONTAINER_PATH, BRONZE_STAGE_DIR_PATH, SILVER_STAGE_DIR_PATH
-from databricks.utils.helpers import extract_timestamp_string, parse_file_timestamp
+from databricks.utils.helpers import extract_timestamp_string, parse_file_timestamp, deduplicate_df
 
 # COMMAND ----------
 
@@ -147,7 +147,7 @@ MONITOR_STATIONS_SILVER_LOC = os.path.join(SILVER_STAGE_DIR_PATH, 'monitoring_st
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##### Create dimension table
+# MAGIC ##### Create monitoring stations sliver table (Dimension SCD Type 1)
 
 # COMMAND ----------
 
@@ -212,9 +212,7 @@ def update_monitor_stations_silver(microbatch, batch_id):
     )
 
     # perform microbatch deduplication
-    microbatch_dedup = microbatch.selectExpr(
-        "*", "MAX(file_timestamp) OVER (PARTITION BY station_id) AS max_timestamp"
-    ).where("file_timestamp = max_timestamp")
+    microbatch_dedup = deduplicate_df(microbatch, "file_timestamp", "station_id")
 
     # perform upsert
     (
