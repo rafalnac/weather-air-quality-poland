@@ -9,51 +9,56 @@ from .connect_config import syn_sql_pool_conn_string
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Python HTTP trigger function processed a request.")
 
-    # instanciate connection obj
+    # Instanciate connection obj
     cnx = pyodbc.connect(syn_sql_pool_conn_string)
 
     logging.info("Established connection to server")
 
-    # define query to select measure point ids from view [air_quality].[v_measure_points]
+    # Define query to select measure point ids from view [air_quality].[v_measure_points]
     query_select = """
     SELECT TOP 3
         [point_id]
     FROM [air_quality].[v_measure_points]
     """
 
-    # instanciate cursor object
+    # Instanciate cursor object
     cursor_object = cnx.cursor()
 
-    # execute the query
+    # Execute the query
     cursor_object.execute(query_select)
 
-    # fetch the records
+    # Fetch the records
     records = cursor_object.fetchall()
 
-    # convert records from List[Row] to List[Tuple]
+    # Convert records from List[Row] to List[Tuple]
     records = [tuple(record) for record in records]
 
-    # unpack nested tuples to list
+    # Unpack nested tuples to list
     records_flat = [item for nested_tuple in records for item in nested_tuple]
 
+    # Initialize a list to store JSON objects
     api_list = []
+
+    # Loop through each point_id 
     for point_id in records_flat:
-        req = requests.get(
+    
+        # Get measurment data for each point_id
+        reqs = requests.get(
             url=f"https://api.gios.gov.pl/pjp-api/rest/data/getData/{point_id}"
         )
-        # convert response object to JSON
-        req_json = req.json()
+        # Convert response object to JSON
+        req_json = reqs.json()
 
-        # specify point_id key to update JSON
+        # Specify point_id key to update JSON
         point_id_to_insert = {"point_id": point_id}
 
-        # update_json with point id
+        # Update_json with point id
         req_json.update(point_id_to_insert)
 
-        # append to the list
+        # Append to the list
         api_list.append(req_json)
     
-    # convert list to JSON
+    # Convert list to JSON
     api_json = json.dumps(obj=api_list)
 
     return func.HttpResponse(
