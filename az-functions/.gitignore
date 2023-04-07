@@ -127,6 +127,7 @@ bin
 obj
 appsettings.json
 local.settings.json
+setenv.cmd
 
 # Azurite artifacts
 __blobstorage__
