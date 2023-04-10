@@ -3,7 +3,7 @@
 The project aims to track air quality in Poland and its dependence on the weather conditions present at the same time.
 
 ### Data archtecture
-![data_architecture](https://user-images.githubusercontent.com/98704847/228336771-83d3a6ba-943f-421c-9da0-f0d2a45fe0ee.png)
+![data_architecture](https://user-images.githubusercontent.com/98704847/231006425-91daa2cb-e0cf-4c3d-abc1-a920a2fcfdf8.png)
 
 ### Data sources
 #### Air quality
