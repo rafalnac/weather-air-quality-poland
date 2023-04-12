@@ -74,6 +74,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
     )
 
+    # Replace ':' to '-' in timestamp
+    current_timestamp_utc = current_timestamp_utc.replace(':', "_")
+
     # Create blob in container
     container_weather_dir_raw_data.upload_blob(
         name=f"measure_points_data_{current_timestamp_utc}.json",
