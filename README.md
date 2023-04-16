@@ -16,6 +16,6 @@ Note: User is required to read and accept the Terms and Conditions available on 
 #### Ingest
 
 
-#### Transform
+#### Store and Transform
 
 #### Data model
