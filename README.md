@@ -12,3 +12,10 @@ Air quality data are obtained from API available under https://powietrze.gios.go
 #### Weather conditions
 Weather conditions data are obtained from the API available under https://danepubliczne.imgw.pl/apiinfo </br>
 Note: User is required to read and accept the Terms and Conditions available on the website before using the API.
+
+#### Ingest
+
+
+#### Transform
+
+#### Data model
