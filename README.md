@@ -21,7 +21,7 @@ Depending on the number of API requests needed to retrieve the data, a different
 
 - Air quality(https://powietrze.gios.gov.pl/pjp/content/api)
 1) List of measurement stations
-  - API: http://api.gios.gov.pl/pjp-api/rest/station/findAll
+  * API: http://api.gios.gov.pl/pjp-api/rest/station/findAll
   - Tool: Synapse(Pipeline)
 
 2) List of measure points for each station
