@@ -17,28 +17,28 @@ Note: User is required to read and accept the Terms and Conditions available on 
 
 Data are retrievied via API requests.</br>
 
-Depending on the number of API requests needed to retrieve the data, a different approach is used to perform the retrieval.
+Depending on the number of API requests needed to retrieve the data, a different approach is used to perform the retrieval:
 
-- Air quality
-  1) List of measurement stations
+Air quality
+1) List of measurement stations
    - API: http://api.gios.gov.pl/pjp-api/rest/station/findAll
    - Tool: Synapse(Pipeline)
 
-  2) List of measure points for each station
+2) List of measure points for each station
    - API: https://api.gios.gov.pl/pjp-api/rest/station/sensors/{stationId}
    - Tool: Synapse(Pipeline)
 
-  3) Measurment values for each point
+3) Measurment values for each point
    - API: https://api.gios.gov.pl/pjp-api/rest/data/getData/{sensorId}
    - Tool: Azure Function App + Synapse(Pipeline)
 
-Each station can contain more than one measure point and each measure point requires separtate API request.
-In order to retrieve measurement data for all points it's needed to execute more than 700 API calls.
-To optimize cost, retrieving and storing data are perfomed via Azure Functions App. App is written in Python.
-Funcion run is scheduled via Synapse Analytics(Pipeline).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Each station can contain more than one measure point and each measure point requires separtate API request.</br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In order to retrieve measurement data for all points it's needed to execute more than 700 API calls.</br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To optimize cost, retrieving and storing data are perfomed via Azure Functions App. App is written in Python.</br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Funcion run is scheduled via Synapse Analytics(Pipeline).</br>
 
 
-- Weather conditions(https://danepubliczne.imgw.pl/apiinfo)
+Weather conditions
 In development...
 
 #### Store and Transform
