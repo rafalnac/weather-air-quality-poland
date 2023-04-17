@@ -44,7 +44,7 @@ In development...
 #### Store and Transform
 In development...
 
-Raw data are taken from data lake and transformed via Databricks and stored in Delta format.
+Raw data are taken from data lake, transformed via Databricks and stored in Delta format.
 
 ![data_transformations_databricks](https://user-images.githubusercontent.com/98704847/232466850-a6665e00-ca6c-4a39-80f6-c29838c2cb1a.png)
 
