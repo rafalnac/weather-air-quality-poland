@@ -38,7 +38,7 @@ Air quality
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Funcion run is scheduled via Synapse Analytics(Pipeline).</br>
 
 
-Weather conditions
+Weather conditions</br>
 In development...
 
 #### Store and Transform
