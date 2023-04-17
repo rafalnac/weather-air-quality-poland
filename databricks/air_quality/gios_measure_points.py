@@ -21,7 +21,7 @@ from databricks.utils.helpers import extract_timestamp_string, parse_file_timest
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### Define schema for measure points JSON files
+# MAGIC ##### Define schema for measure points JSON files
 
 # COMMAND ----------
 
