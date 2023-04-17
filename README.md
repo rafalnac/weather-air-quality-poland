@@ -15,24 +15,22 @@ Note: User is required to read and accept the Terms and Conditions available on 
 
 #### Ingest
 
-Data are retrievied via API requests.
+Data are retrievied via API requests.</br>
 
 Depending on the number of API requests needed to retrieve the data, a different approach is used to perform the retrieval.
 
-
-
 - Air quality(https://powietrze.gios.gov.pl/pjp/content/api)
 1) List of measurement stations
-API: http://api.gios.gov.pl/pjp-api/rest/station/findAll
-Tool: Synapse(Pipeline)
+- API: http://api.gios.gov.pl/pjp-api/rest/station/findAll
+- Tool: Synapse(Pipeline)
 
 2) List of measure points for each station
-API: https://api.gios.gov.pl/pjp-api/rest/station/sensors/{stationId}
-Tool: Synapse(Pipeline)
+- API: https://api.gios.gov.pl/pjp-api/rest/station/sensors/{stationId}
+- Tool: Synapse(Pipeline)
 
 3) Measurment values for each point
-API: https://api.gios.gov.pl/pjp-api/rest/data/getData/{sensorId}
-Tool: Azure Function App + Synapse(Pipeline)</br>
+- API: https://api.gios.gov.pl/pjp-api/rest/data/getData/{sensorId}
+- Tool: Azure Function App + Synapse(Pipeline)
 Each station can contain more than one measure point and each measure point requires separtate API request.
 In order to retrieve measurement data for all points it's needed to execute more than 700 API calls.
 To optimize cost, retrieving and storing data are perfomed via Azure Functions App. App is written in Python.
@@ -40,11 +38,10 @@ Funcion run is scheduled via Synapse Analytics(Pipeline).
 
 
 - Weather conditions(https://danepubliczne.imgw.pl/apiinfo)
-In development
-
+In development...
 
 #### Store and Transform
-In development
+In development...
 
 Raw data are taken from data lake and transformed via Databricks and stored in Delta format.
 
