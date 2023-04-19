@@ -11,9 +11,9 @@ from databricks.utils.constants import WEATHER_AIR_QUALITY_CONTAINER_PATH, RAW_D
 
 # MAGIC %md
 # MAGIC #### Ingest Measure Points Data (BRONZE)
-# MAGIC - Each file comes in multiline JSON format
-# MAGIC - Expects that each file name contains timestamp in ISO format
-# MAGIC - File name example 'measure_points_data_2023-04-12T09_5402.661677+00_00.json'
+# MAGIC - Each file comes in multiline JSON format.
+# MAGIC - Expects that each file name contains timestamp in ISO format.
+# MAGIC - File name example 'measure_points_data_2023-04-12T09_5402.661677+00_00.json'.
 
 # COMMAND ----------
 
