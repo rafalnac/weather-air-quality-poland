@@ -6,6 +6,9 @@ import time
 
 import azure.functions as func
 
+from .transfom import FileName
+from .connect import container_weather_raw_data
+
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Python HTTP trigger function processed a request.")
@@ -30,8 +33,17 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     # Convert Response object to JSON
     reqst_data = reqst.json()
 
-    # Convert JSON to string.
-    # Param ensure_ascii is set to false because JSON contains polish chars
+    # Convert JSON to string. JSON contains polish characters
     json_str = json.dumps(reqst_data, ensure_ascii=False)
 
-    return func.HttpResponse(json_str, status_code=200)
+    # Create file name
+    iso_timestamp = FileName.get_iso_timestamp()
+    file_name = FileName("weather_data").add_suffix(iso_timestamp)
+
+    # Write to the blob container
+    container_weather_raw_data.upload_blob(
+        name=f"{file_name}.json",
+        data=json_str
+    )
+
+    return func.HttpResponse(status_code=200)
