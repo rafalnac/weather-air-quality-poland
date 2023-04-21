@@ -39,14 +39,18 @@ Air quality
 
 
 Weather conditions</br>
-In development...
+1) Weather data
+   - API: https://danepubliczne.imgw.pl/api/data/synop
+   - Tool: Azure Function App + Synapse(Pipeline)
+   - Description: Measurment are taken every hour in the UTC time. Example: API request is made at 10:05 UTC and measurment time in the JSON responce is from 9:00 UTC. Function App calls API and stores its response in the JSON format in the data lake. Funtion is triggered every hour via Azure Syanpse(Pipeline).
+
 
 #### Store and Transform
 In development...
 
 Raw data are taken from data lake, transformed via Databricks and stored in Delta format.
 
-![data_transformations_databricks](https://user-images.githubusercontent.com/98704847/232466850-a6665e00-ca6c-4a39-80f6-c29838c2cb1a.png)
+![data_transformations_databricks](https://user-images.githubusercontent.com/98704847/233650703-8e21549e-2e0a-47a7-bc6e-2aed67fef8cc.png)
 
 #### Data model
 
