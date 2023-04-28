@@ -49,9 +49,9 @@ Weather conditions</br>
 In development...
 
 Raw data are taken from data lake, transformed via Databricks and stored in Delta format.
-
-![data_transformations_databricks](https://user-images.githubusercontent.com/98704847/233650703-8e21549e-2e0a-47a7-bc6e-2aed67fef8cc.png)
+![data_transformations_databrick_gold](https://user-images.githubusercontent.com/98704847/235168108-884fb869-f6c2-4ad6-910d-119ab7f7a877.png)
 
 #### Data model
 
 In development...
+![data_model](https://user-images.githubusercontent.com/98704847/235167297-3c4dd4d2-ed3c-4fe3-ab9b-6b683ca43e0c.png)
