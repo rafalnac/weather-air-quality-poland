@@ -54,4 +54,4 @@ Raw data are taken from data lake, transformed via Databricks and stored in Delt
 #### Data model
 
 In development...
-![data_model](https://user-images.githubusercontent.com/98704847/235167297-3c4dd4d2-ed3c-4fe3-ab9b-6b683ca43e0c.png)
+![data_model](https://user-images.githubusercontent.com/98704847/235169453-47753ceb-2245-42af-b2ba-868cf8e2b7d2.png)
