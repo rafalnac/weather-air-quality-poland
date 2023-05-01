@@ -68,8 +68,12 @@ def deduplicate_df(
     if not isinstance(timestamp_col, str) or not isinstance(partition_by, str):
         raise TypeError("Column must be a string")
 
-    df_dedup = df.selectExpr(
+    df_dedup = (
+        df.selectExpr(
         "*", f"MAX({timestamp_col}) OVER (PARTITION BY {partition_by}) AS max_timestamp"
-    ).where(f"{timestamp_col} = max_timestamp")
+        )
+        .where(f"{timestamp_col} = max_timestamp")
+        .selectExpr("* EXCEPT(max_timestamp)")
+    )
 
     return df_dedup
