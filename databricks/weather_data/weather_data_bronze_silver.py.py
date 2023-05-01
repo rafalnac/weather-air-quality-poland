@@ -148,6 +148,16 @@ LOCATION "{weather_data_location_silver}";
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ##### Enable CDC to existing table 'project_weather_air.weather_data.weather_data_silver'
+
+# COMMAND ----------
+
+# %sql
+# ALTER TABLE project_weather_air.weather_data.weather_data_silver SET TBLPROPERTIES(delta.enableChangeDataFeed = true)
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ##### Load bronze table to dataframe
 
 # COMMAND ----------
@@ -269,8 +279,3 @@ write_query = (
     .trigger(availableNow=True)
     .start()
 )
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC SELECT * FROM project_weather_air.weather_data.weather_data_silver;
