@@ -44,8 +44,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     api_list = []
 
     # Loop through each point_id
-    # for station_id in records_flat:
-    for station_id in (11, 16):
+    for station_id in records_flat:
         # Get measurement_points_for_each_station
         reqs = requests.get(
             url=f"https://api.gios.gov.pl/pjp-api/rest/station/sensors/{station_id}"
