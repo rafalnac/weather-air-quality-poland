@@ -6,7 +6,7 @@ import time
 
 import azure.functions as func
 
-from .transfom import FileName
+from ..transform.transfom import FileName
 from .connect import container_weather_raw_data
 
 
