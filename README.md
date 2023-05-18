@@ -26,7 +26,7 @@ Air quality
 
 2) List of measure points for each station
    - API: https://api.gios.gov.pl/pjp-api/rest/station/sensors/{stationId}
-   - Tool: Synapse(Pipeline)
+   - Tool: Azure Function App + Synapse(Pipeline)
 
 3) Measurment values for each point
    - API: https://api.gios.gov.pl/pjp-api/rest/data/getData/{sensorId}
@@ -46,12 +46,10 @@ Weather conditions</br>
 
 
 #### Store and Transform
-In development...
 
 Raw data are taken from data lake, transformed via Databricks and stored in Delta format.
-![data_transformations_databrick_gold](https://user-images.githubusercontent.com/98704847/235168108-884fb869-f6c2-4ad6-910d-119ab7f7a877.png)
+![data_transformations_databrick_gold](https://github.com/rafalnac/weather-air-quality-poland/assets/98704847/54dc6332-43f7-40a8-a543-3b7c30b8fd0d)
 
 #### Data model
 
-In development...
-![data_model](https://user-images.githubusercontent.com/98704847/235169453-47753ceb-2245-42af-b2ba-868cf8e2b7d2.png)
+![data_model](https://github.com/rafalnac/weather-air-quality-poland/assets/98704847/060f8956-6b5b-4055-9d0f-c342098cefb1)
