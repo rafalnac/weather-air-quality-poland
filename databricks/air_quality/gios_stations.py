@@ -147,14 +147,13 @@ MONITOR_STATIONS_SILVER_LOC = os.path.join(SILVER_STAGE_DIR_PATH, 'monitoring_st
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##### Create monitoring stations sliver table (Dimension SCD Type 1)
+# MAGIC ##### Create monitoring stations sliver table
 
 # COMMAND ----------
 
 spark.sql(
     f"""CREATE TABLE IF NOT EXISTS project_weather_air.air_quality.monitoring_stations_silver
 (
-  station_sk BIGINT GENERATED ALWAYS AS IDENTITY (START WITH 1),
   station_id INT,
   street STRING,
   city_name STRING,
@@ -213,6 +212,8 @@ def update_monitor_stations_silver(microbatch, batch_id):
 
     # perform microbatch deduplication
     microbatch_dedup = deduplicate_df(microbatch, "file_timestamp", "station_id")
+    # remove duplicates in case of the same value in files_timestamp
+    microbatch_dedup = microbatch_dedup.dropDuplicates(["station_id"])
 
     # perform upsert
     (
@@ -245,7 +246,7 @@ def update_monitor_stations_silver(microbatch, batch_id):
                 "t.latitude": "s.latitude",
                 "t.longitude": "s.longitude",
                 "t.station_name": "s.station_name",
-                "t.processed_timestamp": "current_timestamp()",
+                "t.processed_timestamp": "current_timestamp()"
             }
         )
         .execute()
@@ -264,3 +265,7 @@ write_to_silver_query = (monitor_stations_bronze_select_cols
      .trigger(availableNow=True)
      .start()
 )
+
+# COMMAND ----------
+
+
