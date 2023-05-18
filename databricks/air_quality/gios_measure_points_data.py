@@ -205,6 +205,11 @@ LOCATION "{measure_points_data_silver_loc}"
 
 # COMMAND ----------
 
+# %sql
+# ALTER TABLE project_weather_air.air_quality.measure_points_data_silver SET TBLPROPERTIES(delta.enableChangeDataFeed = true)
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ##### Upsert
 # MAGIC - Insert only rows which are not already in the silver table
@@ -278,9 +283,5 @@ upsert_query = (
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC SELECT * FROM project_weather_air.air_quality.measure_points_data_silver;
-
-# COMMAND ----------
-
-
+# %sql
+# SELECT * FROM project_weather_air.air_quality.measure_points_data_silver;
