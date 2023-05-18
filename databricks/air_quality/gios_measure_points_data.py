@@ -192,12 +192,12 @@ measure_data_expl_id = measure_data_expl_selected.withColumn(
 spark.sql(f"""
 CREATE TABLE IF NOT EXISTS project_weather_air.air_quality.measure_points_data_silver
 (
-  measure_sk BIGINT GENERATED ALWAYS AS IDENTITY (START WITH 1),
   measure_id STRING,
   parameter_name STRING,
   point_id INT,
   measure_date DATE,
-  measure_value DOUBLE  
+  measure_value DOUBLE,
+  processed_timestamp TIMESTAMP
 )
 LOCATION "{measure_points_data_silver_loc}"
 """
@@ -205,14 +205,19 @@ LOCATION "{measure_points_data_silver_loc}"
 
 # COMMAND ----------
 
+# %sql
+# ALTER TABLE project_weather_air.air_quality.measure_points_data_silver SET TBLPROPERTIES(delta.enableChangeDataFeed = true)
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ##### Upsert
 # MAGIC - Insert only rows which are not already in the silver table
-# MAGIC 
+# MAGIC
 # MAGIC Each microbatch may contains duplicates because each API call
 # MAGIC (https://api.gios.gov.pl/pjp-api/rest/data/getData/{measure_point})
 # MAGIC returns data for 3 last days, starting from 01:00:00 AM.
-# MAGIC 
+# MAGIC
 # MAGIC Example:
 # MAGIC Time of HTTP request: 31.03 14:00, data returned: starting 29.03 01:00:00 AM,
 # MAGIC increment every hour until 31.03 14:00.
@@ -250,7 +255,8 @@ def update_silver_table(microbatch, batch_id):
                     "t.parameter_name": "s.parameter_name",
                     "t.point_id": "s.point_id",
                     "t.measure_date": "s.measure_date",
-                    "t.measure_value": "s.measure_value"
+                    "t.measure_value": "s.measure_value",
+                    "t.processed_timestamp": current_timestamp()
                 }
             )
             .execute()
@@ -274,3 +280,8 @@ upsert_query = (
         .trigger(availableNow=True)
         .start()
 )
+
+# COMMAND ----------
+
+# %sql
+# SELECT * FROM project_weather_air.air_quality.measure_points_data_silver;
