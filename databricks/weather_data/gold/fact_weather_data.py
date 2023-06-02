@@ -2,7 +2,7 @@
 import os
 
 from delta.tables import DeltaTable
-from pyspark.sql.functions import col, broadcast
+from pyspark.sql.functions import col, broadcast, max
 
 from databricks.utils.constants import GOLD_STAGE_DIR_PATH
 from databricks.utils.helpers import deduplicate_df
@@ -29,7 +29,7 @@ fact_weather_storage_loc = os.path.join(GOLD_STAGE_DIR_PATH, "fact_weather_data"
 # COMMAND ----------
 
 spark.sql(f"""
-CREATE OR REPLACE TABLE project_weather_air.weather_data.fact_weather_data
+CREATE TABLE IF NOT EXISTS project_weather_air.weather_data.fact_weather_data
 (
   weather_id BIGINT CONSTRAINT weather_data_pk PRIMARY KEY,
   weather_nk STRING,
@@ -37,7 +37,7 @@ CREATE OR REPLACE TABLE project_weather_air.weather_data.fact_weather_data
   measurement_date DATE,
   measurment_hour INT,
   station_sk BIGINT CONSTRAINT weather_data_station_fk FOREIGN KEY
-    REFERENCES project_weather_air.weather_data.dim_weather_station,
+    REFERENCES project_weather_air.weather_data.dim_weather_station(station_sk),
   wind_direction INT,
   wind_speed INT,
   precipitation DOUBLE,
@@ -91,13 +91,30 @@ dim_weather_station = (
 
 # COMMAND ----------
 
+dim_weather_station.display()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ##### Choose newest surogate key to match with microbatch
+# MAGIC - Handles SCD type 2
+# MAGIC - Assumes that surogate key in dimension table is defined as Identity
+
+# COMMAND ----------
+
+dim_weather_station_grouped_sk = dim_weather_station.groupBy("station_id", "station_name").agg(
+    max(col("station_sk")).alias("station_sk")
+)
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ##### Rename columns from dimension to avoid ambiguity during join
 
 # COMMAND ----------
 
 dim_weather_station_renamed = (
-    dim_weather_station
+    dim_weather_station_grouped_sk
         .withColumnRenamed("station_id", "station_id_dim")
         .withColumnRenamed("station_name", "station_name_dim")
 )

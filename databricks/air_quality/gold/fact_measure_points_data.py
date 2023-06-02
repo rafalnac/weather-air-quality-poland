@@ -1,7 +1,7 @@
 # Databricks notebook source
 import os
 
-from pyspark.sql.functions import col, broadcast
+from pyspark.sql.functions import col, broadcast, max
 from delta.tables import DeltaTable
 
 from databricks.utils.constants import GOLD_STAGE_DIR_PATH
@@ -43,13 +43,32 @@ dim_measurement_point = spark.read.table("project_weather_air.air_quality.dim_me
 
 # COMMAND ----------
 
+dim_measurement_point.display()
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+dim_measurement_point_grouped_sk = (
+    dim_measurement_point
+        .groupBy(
+            "point_id", "parameter_name", "city_name",
+            "street", "latitude", "longitude"
+            )
+        .agg(max("point_sk"))
+)
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ##### Rename 'parameter_name' to avoid ambiguity after join
 
 # COMMAND ----------
 
 dim_measurement_point = (
-    dim_measurement_point
+    dim_measurement_point_grouped_sk
         .withColumnRenamed("parameter_name", "parameter_name_dim")
 )
 
@@ -115,9 +134,6 @@ def upsert_to_delta(microbatch, batch_id):
     # Instanciate Delta Table object
     target = DeltaTable.forName(spark, "project_weather_air.air_quality.fact_measurement_points_data")
 
-    # Perform microbatch deduplication
-#     source_deduped = deduplicate_df(microbatch, "measure_id", "_commit_timestamp")
-
     # Upsert
     (
         target.alias("t")
@@ -155,3 +171,7 @@ write_streaming_query = (
         .trigger(availableNow=True)
         .start()
 )
+
+# COMMAND ----------
+
+

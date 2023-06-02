@@ -11,7 +11,7 @@ from databricks.utils.constants import GOLD_STAGE_DIR_PATH
 # MAGIC %md
 # MAGIC #### Create station dimension table
 # MAGIC One station can contain multiple points
-# MAGIC 1) Join measure_points_silver and monitoring_stations_silver (ON station_id)
+# MAGIC 1) Join measure_points_silver and monitoring_stations_silver (key = station_id)
 # MAGIC 2) Select required columns
 
 # COMMAND ----------
@@ -121,12 +121,3 @@ dim_measure_point_delta = DeltaTable.forName(spark, "project_weather_air.air_qua
     )
     .execute()
 )
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC SELECT * FROM project_weather_air.air_quality.dim_measurement_point;
-
-# COMMAND ----------
-
-
