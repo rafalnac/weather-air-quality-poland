@@ -4,8 +4,8 @@ import os
 from pyspark.sql.functions import col, broadcast
 from delta.tables import DeltaTable
 
-from databricks.utils.constants import GOLD_STAGE_DIR_PATH
-from databricks.utils.helpers import deduplicate_df
+from etldatabricks.utils.constants import GOLD_STAGE_DIR_PATH
+from etldatabricks.utils.helpers import deduplicate_df
 
 # COMMAND ----------
 

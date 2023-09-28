@@ -5,7 +5,7 @@ from pyspark.sql.types import *
 from pyspark.sql.functions import current_timestamp, input_file_name, col, explode, lit, concat, date_format
 from delta.tables import DeltaTable
 
-from databricks.utils.constants import WEATHER_AIR_QUALITY_CONTAINER_PATH, RAW_DATA_PATH, BRONZE_STAGE_DIR_PATH, SILVER_STAGE_DIR_PATH
+from etldatabricks.utils.constants import WEATHER_AIR_QUALITY_CONTAINER_PATH, RAW_DATA_PATH, BRONZE_STAGE_DIR_PATH, SILVER_STAGE_DIR_PATH
 
 # COMMAND ----------
 

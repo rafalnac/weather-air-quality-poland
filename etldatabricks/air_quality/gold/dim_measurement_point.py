@@ -4,7 +4,7 @@ import os
 from pyspark.sql.functions import col
 from delta.tables import DeltaTable
 
-from databricks.utils.constants import GOLD_STAGE_DIR_PATH
+from etldatabricks.utils.constants import GOLD_STAGE_DIR_PATH
 
 # COMMAND ----------
 

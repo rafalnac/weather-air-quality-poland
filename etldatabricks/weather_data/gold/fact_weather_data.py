@@ -4,8 +4,8 @@ import os
 from delta.tables import DeltaTable
 from pyspark.sql.functions import col, broadcast
 
-from databricks.utils.constants import GOLD_STAGE_DIR_PATH
-from databricks.utils.helpers import deduplicate_df
+from etldatabricks.utils.constants import GOLD_STAGE_DIR_PATH
+from etldatabricks.utils.helpers import deduplicate_df
 
 # COMMAND ----------
 
@@ -29,7 +29,7 @@ fact_weather_storage_loc = os.path.join(GOLD_STAGE_DIR_PATH, "fact_weather_data"
 # COMMAND ----------
 
 spark.sql(f"""
-CREATE OR REPLACE TABLE project_weather_air.weather_data.fact_weather_data
+CREATE TABLE IF NOT EXISTS project_weather_air.weather_data.fact_weather_data
 (
   weather_id BIGINT CONSTRAINT weather_data_pk PRIMARY KEY,
   weather_nk STRING,

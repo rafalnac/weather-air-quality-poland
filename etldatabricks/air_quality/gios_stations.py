@@ -5,8 +5,8 @@ from pyspark.sql.functions import current_timestamp, input_file_name, schema_of_
 from pyspark.sql.types import *
 from delta.tables import DeltaTable
 
-from databricks.utils.constants import WEATHER_AIR_QUALITY_CONTAINER_PATH, BRONZE_STAGE_DIR_PATH, SILVER_STAGE_DIR_PATH
-from databricks.utils.helpers import extract_timestamp_string, parse_file_timestamp, deduplicate_df
+from etldatabricks.utils.constants import WEATHER_AIR_QUALITY_CONTAINER_PATH, BRONZE_STAGE_DIR_PATH, SILVER_STAGE_DIR_PATH
+from etldatabricks.utils.helpers import extract_timestamp_string, parse_file_timestamp, deduplicate_df
 
 # COMMAND ----------
 
