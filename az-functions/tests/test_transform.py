@@ -42,3 +42,6 @@ def test_iso_timestamp(constructor):
     assert ":" not in constructor.get_iso_timestamp()
     # Check if timestamp is in UTC
     assert constructor.get_iso_timestamp()[-5:] == "00_00"
+
+def test_always_pass():
+    assert True
