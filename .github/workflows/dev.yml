@@ -5,7 +5,7 @@ name: Dev
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "dev" ]
 
 permissions:
   contents: read
