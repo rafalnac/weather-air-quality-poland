@@ -24,7 +24,17 @@ class FileName:
         self._name = value
 
     def add_suffix(self, suffix: str, sep: str = "_") -> str:
-        """Cretes string with file_name and suffix separated by sep."""
+        """Creates string with file_name and suffix separated by sep.
+
+        Raises
+            TypeError: If suffix or sep are not str type.
+        """
+
+        if not isinstance(suffix, str):
+            raise TypeError("Value must be a string type")
+
+        if not isinstance(sep, str):
+            raise TypeError("Value must be a string type")
 
         return sep.join([self.name, str(suffix)])
 
@@ -35,6 +45,9 @@ class FileName:
         Function replaces ':'(colon) to '_'(underscore) in timestamp.
         Example:
             2023-04-12T09:54:02.661677+00:00 -> 2023-04-12T09_54_02.661677+00_00
+
+        Returns:
+            String representation of timestamp.
         """
 
         # Create UTC timestamp in iso format.
@@ -47,7 +60,4 @@ class FileName:
 
 
 if __name__ == "__main__":
-    file_name = FileName("6")
-    current_timestamp = FileName.get_iso_timestamp()
-    print(file_name)
-    print(file_name.add_suffix(current_timestamp))
+    pass
