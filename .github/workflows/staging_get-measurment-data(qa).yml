@@ -8,8 +8,8 @@ on:
   push:
     branches:
       - staging
-    # paths:
-    #   - ./az-functions/**
+    paths:
+      - az-functions/**
   workflow_dispatch:
 
 env:
@@ -34,7 +34,7 @@ jobs:
           source venv/bin/activate
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r ./az-functions/requirements.txt
         
       # Optional: Add step to run tests here
       - name: Run test with pytest
