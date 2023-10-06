@@ -8,8 +8,8 @@ on:
   push:
     branches:
       - staging
-    paths:
-      - ./az-functions/**
+    # paths:
+    #   - ./az-functions/**
   workflow_dispatch:
 
 env:
