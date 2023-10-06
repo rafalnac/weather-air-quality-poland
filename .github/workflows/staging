@@ -7,8 +7,6 @@ on:
   pull_request:
     branches:
       - staging
-    paths:
-      - ./az-functions/**
 
 permissions:
   contents: read
