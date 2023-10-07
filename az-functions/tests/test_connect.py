@@ -10,7 +10,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 from connection import connect
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def default_credentials():
     default_credentials = DefaultAzureCredential()
     return default_credentials
