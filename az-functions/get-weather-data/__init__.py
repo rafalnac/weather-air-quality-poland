@@ -6,14 +6,14 @@ import time
 
 import azure.functions as func
 
-from ..transform.transfom import FileName
-from .connect import container_weather_raw_data
+from ..utils.transfom import FileName
+from ..utils.connect import create_secret_client, create_container_client
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Python HTTP trigger function processed a request.")
 
-    # API URL
+    # Weather data API URL
     weather_data_api_url = "https://danepubliczne.imgw.pl/api/data/synop"
 
     # Explicitly set encoding to corectlly read polish characters

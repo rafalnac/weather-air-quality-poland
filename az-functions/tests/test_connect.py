@@ -7,7 +7,7 @@ from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import ContainerClient
 
 sys.path.append(str(Path(__file__).parent.parent))
-from connection import connect
+from utils import connect
 
 
 @pytest.fixture(scope="session")
