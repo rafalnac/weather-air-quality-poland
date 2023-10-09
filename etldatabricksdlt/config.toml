@@ -1,0 +1,17 @@
+[paths_dev]
+raw_data_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/raw-data"
+bronze_stage_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/bronze"
+silver_stage_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/silver"
+gold_stage_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/gold"
+
+[paths_staging]
+raw_data_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/staging/raw-data"
+bronze_stage_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/staging/bronze"
+silver_stage_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/staging/silver"
+gold_stage_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/staging/gold"
+
+[paths_prod]
+raw_data_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/raw-data"
+bronze_stage_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/bronze"
+silver_stage_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/silver"
+gold_stage_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/gold"
