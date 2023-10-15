@@ -6,7 +6,7 @@ Module contains function used for ingestion and transformation.
 import tomli as tomlib
 
 
-def load_config_files(path: str) -> dict[str, any]:
+def load_config_file(path: str) -> dict[str, any]:
     """Load configuration file in TOML format.
 
     Args:
