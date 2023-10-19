@@ -15,3 +15,6 @@ raw_data_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.w
 bronze_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/bronze"
 silver_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/silver"
 gold_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/gold"
+
+[paths_unit_test]
+weather_raw_data_sample_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/samples/raw-data/weather-data/weather_data_sample.json"

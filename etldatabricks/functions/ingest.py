@@ -1,6 +1,7 @@
 """
 Module contains functions for data ingetions.
 """
+
 from pyspark.sql.functions import col
 from pyspark.sql.connect.dataframe import DataFrame
 
@@ -19,9 +20,9 @@ def add_metadata(df: DataFrame) -> DataFrame:
     # df_metadata = df.select(
     #     "*", "_metadata.file_name", "_metadata.file_modification_time"
     # )
-    df_metadata = df.select("*", "_metadata")
+    df_metadata = df.select(
+        "*",
+        col("_metadata.file_name").alias("file_name"),
+        col("_metadata.file_modification_time").alias("file_modification_time"),
+    )
     return df_metadata
-
-
-
-
