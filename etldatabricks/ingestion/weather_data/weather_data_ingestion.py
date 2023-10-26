@@ -15,14 +15,16 @@ sys.path.append(str(root_dir_path))
 from functions.ingest import add_metadata
 from functions.general import load_config_file
 
+environment = sys.argv[1]
+
 
 # load config file
 cfg_file_path = str(root_dir_path / "config.toml")
 cfg_file = load_config_file(cfg_file_path)
 
 # get paths for development environment
-weather_data_raw_path = f'{cfg_file["paths_dev"]["raw_data"]["weather_data"]}/.*json'
-weather_data_ingestion_sink_path = cfg_file["paths_dev"]["ingestion_dir_path"]
+weather_data_raw_path = f'{cfg_file[{environment}]["path_raw_data"]["weather_data"]}/.*json'
+weather_data_ingestion_sink_path = cfg_file[environment]["path_ingestion"]["weather_data"]
 
 
 def weather_data_ingestion(spark_session: DatabricksSession) -> DataFrameWriter:
@@ -75,7 +77,7 @@ if __name__ == "__main__":
     # create raw data delta table based on the ingested files
     spark.sql(
         f"""
-    CREATE TABLE IF NOT EXISTS project_weather_air_dev.weather_data.weather_data_ingestion
+    CREATE TABLE IF NOT EXISTS project_weather_air_{environment}.weather_data.weather_data_ingestion
     USING DELTA
     LOCATION "{weather_data_ingestion_sink_path}";
     """

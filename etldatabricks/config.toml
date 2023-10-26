@@ -1,20 +1,25 @@
-[paths_dev]
-raw_data_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/raw-data"
-bronze_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/bronze"
-silver_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/silver"
-gold_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/gold"
+[dev]
 
-[paths_staging]
-raw_data_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/staging/raw-data"
-bronze_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/staging/bronze"
-silver_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/staging/silver"
-gold_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/staging/gold"
+    [dev.path_raw_data]
+    weather_data = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/raw-data/weather-data"
 
-[paths_prod]
-raw_data_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/raw-data"
-bronze_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/bronze"
-silver_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/silver"
-gold_dir_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/gold"
+    [dev.path_ingestion]
+    weather_data = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/development/ingestion/weather-data"
 
-[paths_unit_test]
+[staging]
+
+    [staging.path_raw_data]
+    weather_data = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/staging/raw-data/weather-data"
+
+    [staging.path_ingestion]
+    weather_data = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/staging/ingestion/weather-data"
+
+[prod]
+    [prod.path_raw_data]
+    weather_data = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/production/raw-data/weather-data"
+
+    [prod.path_ingestion]
+    weather_data = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/production/ingestion/weather-data"
+
+[unit_test]
 weather_raw_data_sample_path = "abfss://weather-air-quality-poland@ststreamingaccdev.dfs.core.windows.net/samples/raw-data/weather-data/weather_data_sample.json"
