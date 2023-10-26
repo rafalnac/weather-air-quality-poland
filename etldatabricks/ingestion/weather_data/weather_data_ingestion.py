@@ -17,7 +17,7 @@ sys.path.append(str(root_dir_path))
 from functions.ingest import add_metadata
 from functions.general import load_config_file
 
-environment = "dev"
+environment = sys.argv[1]
 
 # load config file
 cfg_file_path = str(root_dir_path / "config.toml")
