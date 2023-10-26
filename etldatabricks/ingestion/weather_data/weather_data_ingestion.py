@@ -3,28 +3,33 @@ Ingest raw data contains weather conditions.
 """
 import sys
 from pathlib import Path
+import os
 
 from databricks.connect import DatabricksSession
 from pyspark.sql import DataFrameWriter
 from pyspark.sql.types import StructType, StructField, StringType
 
 # add root dir to path
-root_dir_path = Path(__file__).parent.parent.parent
+# root_dir_path = Path(__file__).parent.parent.parent
+root_dir_path = Path(os.getcwd()).parent.parent
 sys.path.append(str(root_dir_path))
 
 from functions.ingest import add_metadata
 from functions.general import load_config_file
 
-environment = sys.argv[1]
-
+environment = "dev"
 
 # load config file
 cfg_file_path = str(root_dir_path / "config.toml")
 cfg_file = load_config_file(cfg_file_path)
 
-# get paths for development environment
-weather_data_raw_path = f'{cfg_file[{environment}]["path_raw_data"]["weather_data"]}/.*json'
-weather_data_ingestion_sink_path = cfg_file[environment]["path_ingestion"]["weather_data"]
+# get path according to environment
+weather_data_raw_path = (
+    f'{cfg_file[environment]["path_raw_data"]["weather_data"]}/*.json'
+)
+weather_data_ingestion_sink_path = cfg_file[environment]["path_ingestion"][
+    "weather_data"
+]
 
 
 def weather_data_ingestion(spark_session: DatabricksSession) -> DataFrameWriter:
@@ -56,7 +61,6 @@ def weather_data_ingestion(spark_session: DatabricksSession) -> DataFrameWriter:
     weather_raw_data_df = (
         spark_session.read.format("json")
         .schema(json_schema)
-        .mode("overwirte")
         .load(weather_data_raw_path)
     )
 
@@ -64,8 +68,10 @@ def weather_data_ingestion(spark_session: DatabricksSession) -> DataFrameWriter:
     weather_raw_data_df_metadata = add_metadata(weather_raw_data_df)
 
     # write to storage location
-    return weather_raw_data_df_metadata.write.format("delta").save(
-        weather_data_ingestion_sink_path
+    return (
+        weather_raw_data_df_metadata.write.format("delta")
+        .mode("overwrite")
+        .save(weather_data_ingestion_sink_path)
     )
 
 

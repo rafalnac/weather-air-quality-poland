@@ -16,7 +16,7 @@ from functions.ingest import add_metadata
 from functions.general import load_config_file
 
 # Add root directory to the path
-sys.path.append(str(Path(__file__).parent.parent))
+# sys.path.append(str(Path(__file__).parent.parent))
 
 
 @pytest.fixture(scope="session")
@@ -64,7 +64,7 @@ def weather_raw_data_sample(spark_session, weather_raw_data_schema):
     cfg_file = load_config_file(cfg_file_path)
 
     # get path for weather raw data
-    weather_raw_data_path = cfg_file["paths_unit_test"]["weather_raw_data_sample_path"]
+    weather_raw_data_path = cfg_file["unit_test"]["weather_raw_data_sample_path"]
 
     # load data into dataframe
     sample_df = (
